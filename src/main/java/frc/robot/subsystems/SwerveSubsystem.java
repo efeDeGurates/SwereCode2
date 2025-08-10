@@ -47,17 +47,10 @@ public class SwerveSubsystem extends SubsystemBase{
         
         SwerveModuleState[] states = kinematics.toSwerveModuleStates(chassisSpeeds);
 
-        frontleftModule.setDriveSpeed(states[0].speedMetersPerSecond);
-        frontleftModule.setDriveAngle(states[0].angle.getDegrees());
-
-        frontrightModule.setDriveSpeed(states[1].speedMetersPerSecond);
-        frontrightModule.setDriveAngle(states[1].angle.getDegrees());
-
-        backlefModule.setDriveSpeed(states[2].speedMetersPerSecond);
-        backrightModule.setDriveAngle(states[2].angle.getDegrees());
-
-        backlefModule.setDriveSpeed(states[3].speedMetersPerSecond);
-        backlefModule.setDriveAngle(states[3].angle.getDegrees());
+        frontleftModule.setDesiredState(states[0]);
+        frontrightModule.setDesiredState(states[1]);
+        backlefModule.setDesiredState(states[2]);
+        backrightModule.setDesiredState(states[3]);
     }
 
     public Rotation2d getHead(){

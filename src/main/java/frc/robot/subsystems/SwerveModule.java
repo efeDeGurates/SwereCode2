@@ -1,5 +1,7 @@
 package frc.robot.subsystems;
 
+import static edu.wpi.first.units.Units.Rotation;
+
 import java.lang.module.Configuration;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
@@ -8,6 +10,9 @@ import com.ctre.phoenix6.controls.PositionDutyCycle;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
+
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.kinematics.SwerveModuleState;
 
 public class SwerveModule {
     private final TalonFX driveMotor;
@@ -41,6 +46,16 @@ public class SwerveModule {
     public void setDriveSpeed(double speed){
         
         driveMotor.setControl(new DutyCycleOut(speed)); // gücü 0-1 arasında ayarlamak için DutyCycleOut
+    }
+
+    public void setDesiredState(SwerveModuleState desiredstate){
+        Rotation2d currentangle = Rotation2d.fromDegrees(getSteerAngle());
+
+        SwerveModuleState optimixedstate = SwerveModuleState.optimize(desiredstate, currentangle);
+
+        setDriveSpeed(optimixedstate.speedMetersPerSecond);
+
+        setDriveAngle(optimixedstate.angle.getDegrees());
     }
 
     public void setDriveAngle(double angleDegrees){

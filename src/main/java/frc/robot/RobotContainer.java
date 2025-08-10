@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import static frc.robot.Constants.RobotContainer.*;
 
 public class RobotContainer {
   private final SwerveSubsystem swerveSubsystem = new SwerveSubsystem();
@@ -27,9 +28,28 @@ public class RobotContainer {
         double yspeed = xboxController.getRawAxis(1);
         double rotspeed = xboxController.getRawAxis(2);
 
-        swerveSubsystem.drive(xspeed, yspeed, rotspeed);
+        double rawx = deadBand(xspeed);
+        double rawy = deadBand(yspeed);
+        double rawrot = deadBand(rotspeed);
+
+        xspeed = clamp(rawx, -1,1) * MAX_SPEED;
+        yspeed = clamp(rawy, 1,1) * MAX_SPEED;
+        rotspeed = clamp(rawrot, -1,1) * MAX_ROT_SPEED;
+
+        swerveSubsystem.drive(rawx, rawy, rawrot);
       },swerveSubsystem)
     );
+  }
+
+  private double deadBand(double value){
+    if(value < Constants.RobotContainer.deadband){
+      return 0;
+    }
+    return value;
+  }
+
+  private double clamp(double value,double min,double max){
+    return Math.max(min,Math.min(max, value));
   }
 
   private void configureBindings() {

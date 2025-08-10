@@ -19,12 +19,10 @@ public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
 
   private final RobotContainer m_robotContainer;
-  private XboxController xboxController;
   SwerveSubsystem swerveSubsystem = new SwerveSubsystem();
 
   public Robot() {
     m_robotContainer = new RobotContainer();
-    xboxController = new XboxController(1);
   }
 
 
@@ -59,12 +57,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopPeriodic() {
-
-    double xspeed = xboxController.getRawAxis(0);
-    double yspeed = xboxController.getRawAxis(1);
-    double rotspeed = xboxController.getRawAxis(2);
-
-    swerveSubsystem.drive(xspeed,yspeed,rotspeed);
+    CommandScheduler.getInstance().run();
   }
 
   @Override

@@ -2,6 +2,7 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -39,9 +40,12 @@ public class SwerveSubsystem extends SubsystemBase{
     }
 
     public void drive(double xspeed,double yspeed,double rotspeed){
-        SwerveModuleState[] states = kinematics.toSwerveModuleStates(
-            new edu.wpi.first.math.kinematics.ChassisSpeeds(xspeed,yspeed,rotspeed)
+        Rotation2d robotangle =getHead();
+        ChassisSpeeds chassisSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(
+            xspeed,yspeed,rotspeed,robotangle
         );
+        
+        SwerveModuleState[] states = kinematics.toSwerveModuleStates(chassisSpeeds);
 
         frontleftModule.setDriveSpeed(states[0].speedMetersPerSecond);
         frontleftModule.setDriveAngle(states[0].angle.getDegrees());

@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.simulation.XboxControllerSim;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -19,6 +20,16 @@ public class RobotContainer {
 
   public RobotContainer() {
     configureBindings();
+
+    swerveSubsystem.setDefaultCommand(
+      new RunCommand(() -> {
+        double xspeed = xboxController.getRawAxis(0);
+        double yspeed = xboxController.getRawAxis(1);
+        double rotspeed = xboxController.getRawAxis(2);
+
+        swerveSubsystem.drive(xspeed, yspeed, rotspeed);
+      },swerveSubsystem)
+    );
   }
 
   private void configureBindings() {

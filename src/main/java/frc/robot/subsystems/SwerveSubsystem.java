@@ -1,9 +1,12 @@
 package frc.robot.subsystems;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
+import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
+import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import static frc.robot.Constants.Swerve.*;
@@ -18,31 +21,41 @@ public class SwerveSubsystem extends SubsystemBase{
     private final SwerveModule backlefModule;
 
     private final SwerveDriveKinematics kinematics;
+    private final SwerveDriveOdometry odometry;
 
     private final Pigeon2 gyro;
 
     public SwerveSubsystem(){
 
+        frontrightModule = new SwerveModule(1, 2, 3, 4);
+        frontleftModule = new SwerveModule(5, 6, 7, 8);
+        backrightModule = new SwerveModule(9, 10, 11, 12);
+        backlefModule = new SwerveModule(13, 14, 15, 16);
+
+        kinematics = new SwerveDriveKinematics(
+            new Translation2d(halfLength, halfWidth),
+            new Translation2d(halfLength, -halfWidth),
+            new Translation2d(-halfLength, halfWidth),
+            new Translation2d(-halfLength, -halfWidth)
+        );
+
         gyro = new Pigeon2(13);
         gyro.reset();
 
-        frontrightModule = new SwerveModule(1,2,3);
-        frontleftModule = new SwerveModule(4,5,6);
-        backrightModule = new SwerveModule(7,8,9);
-        backlefModule = new SwerveModule(10,11,12);
-
-        kinematics = new SwerveDriveKinematics(
-            new Translation2d(halfLength,  halfWidth),
-            new Translation2d(halfLength, -halfWidth),
-            new Translation2d(-halfLength, halfWidth),
-            new Translation2d(-halfLength, -halfWidth) 
+        odometry = new SwerveDriveOdometry(
+            kinematics,
+            getHead(),
+            getPositions()
         );
+    }
+    public void updateOdometry(){
+        odometry.update(getHead(), getPositions());
     }
 
     public void drive(double xspeed,double yspeed,double rotspeed){
-        Rotation2d robotangle =getHead();
+        Rotation2d robotAngle = getHead();
         ChassisSpeeds chassisSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(
-            xspeed,yspeed,rotspeed,robotangle
+            xspeed, yspeed, rotspeed, robotAngle
         );
         
         SwerveModuleState[] states = kinematics.toSwerveModuleStates(chassisSpeeds);
@@ -53,6 +66,7 @@ public class SwerveSubsystem extends SubsystemBase{
         backrightModule.setDesiredState(states[3]);
     }
 
+    
     public Rotation2d getHead(){
         return Rotation2d.fromDegrees(gyro.getYaw().getValueAsDouble());
     }
@@ -60,5 +74,13 @@ public class SwerveSubsystem extends SubsystemBase{
     public void resetGyro(){
         gyro.setYaw(0);
     }
-    
+
+    public SwerveModulePosition[] getPositions(){
+        return new SwerveModulePosition[]{
+            frontleftModule.getPosition(),
+            frontrightModule.getPosition(),
+            backlefModule.getPosition(),
+            backrightModule.getPosition()
+        };
+    }
 }

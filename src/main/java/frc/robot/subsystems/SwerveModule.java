@@ -12,18 +12,22 @@ import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import static frc.robot.Constants.SwerveModule.*;
 
 public class SwerveModule {
     private final TalonFX driveMotor;
     private final TalonFX steerMotor;
     private final CANcoder steerEncoder;
+    private final CANcoder driveEncoder;
 
-    public SwerveModule(int driveID,int steerID,int encoderID){
+    public SwerveModule(int driveID,int steerID,int steerEncoderID,int driveEncoderID){
 
         driveMotor = new TalonFX(driveID);
         steerMotor = new TalonFX(steerID);
-        steerEncoder = new CANcoder(encoderID);
+        steerEncoder = new CANcoder(steerEncoderID);
+        driveEncoder = new CANcoder(driveEncoderID);
 
         configureMotors();
     }
@@ -69,5 +73,16 @@ public class SwerveModule {
     public double getSteerAngle(){
         return steerEncoder.getPosition().getValueAsDouble() * 360.0;
     }
+    public double getDriveDistanceMeters() {
+        double rotations = driveEncoder.getPosition().getValueAsDouble();
+        double wheelCircumferenceMeters = wheelCircumferenceInches * 0.0254;
+        double distanceMeters = rotations * wheelCircumferenceMeters;
+        return distanceMeters;
+    }
+    public SwerveModulePosition getPosition() {
+    double distanceMeters = getDriveDistanceMeters();
+    Rotation2d angle = Rotation2d.fromDegrees(getSteerAngle());
+    return new SwerveModulePosition(distanceMeters, angle);
+}
 }
 

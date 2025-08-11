@@ -9,7 +9,10 @@ public final class Constants {
     public static final double deadband = 0.05;
     public static final double MAX_SPEED = 3.0;
     public static final double MAX_ROT_SPEED = 3.0;
-
+  }
+  public static final class SwerveModule{
+    public static final double wheelDiameterInches = 4.0;
+    public static final double wheelCircumferenceInches = wheelDiameterInches * Math.PI;
   }
 
 }

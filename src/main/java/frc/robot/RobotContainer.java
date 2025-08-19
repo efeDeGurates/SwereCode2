@@ -14,10 +14,13 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import static frc.robot.Constants.RobotContainer.*;
 
+import com.ctre.phoenix6.swerve.SwerveModule;
+
 public class RobotContainer {
   private final SwerveSubsystem swerveSubsystem = new SwerveSubsystem();
   private final XboxController xboxController = new XboxController(0);
   private final JoystickButton aButton = new JoystickButton(xboxController, XboxController.Button.kA.value);
+  private final JoystickButton bButton = new JoystickButton(xboxController,XboxController.Button.kA.value);
 
   public RobotContainer() {
     configureBindings();
@@ -54,5 +57,6 @@ public class RobotContainer {
 
   private void configureBindings() {
     aButton.onTrue(new InstantCommand(() -> swerveSubsystem.resetGyro()));
+    bButton.onTrue(new InstantCommand(() -> swerveSubsystem.saveAllModuleOffset()));
   }
 }

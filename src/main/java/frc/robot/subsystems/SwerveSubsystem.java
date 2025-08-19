@@ -83,4 +83,12 @@ public class SwerveSubsystem extends SubsystemBase{
             backrightModule.getPosition()
         };
     }
+
+    // offset
+    public void saveAllModuleOffset(){
+        frontleftModule.saveOffset();
+        frontrightModule.saveOffset();
+        backlefModule.saveOffset();
+        backrightModule.saveOffset();
+    }
 }

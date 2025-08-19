@@ -22,6 +22,8 @@ public class SwerveModule {
     private final CANcoder steerEncoder;
     private final CANcoder driveEncoder;
 
+    private double steerOffset = 0;
+
     public SwerveModule(int driveID,int steerID,int steerEncoderID,int driveEncoderID){
 
         driveMotor = new TalonFX(driveID);
@@ -52,6 +54,8 @@ public class SwerveModule {
         driveMotor.setControl(new DutyCycleOut(speed)); // gücü 0-1 arasında ayarlamak için DutyCycleOut
     }
 
+
+    // tekerlerk yön optimizasyonu
     public void setDesiredState(SwerveModuleState desiredstate){
         Rotation2d currentangle = Rotation2d.fromDegrees(getSteerAngle());
 
@@ -83,6 +87,14 @@ public class SwerveModule {
     double distanceMeters = getDriveDistanceMeters();
     Rotation2d angle = Rotation2d.fromDegrees(getSteerAngle());
     return new SwerveModulePosition(distanceMeters, angle);
+}
+public void saveOffset(){
+    steerOffset = getSteerAngle();
+}
+
+public Rotation2d getSteerAngleWithOffset() {
+    double angledegrees = getSteerAngle() - steerOffset;
+    return Rotation2d.fromDegrees(angledegrees); 
 }
 }
 

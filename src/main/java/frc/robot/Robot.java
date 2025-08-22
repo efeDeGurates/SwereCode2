@@ -1,5 +1,10 @@
 package frc.robot;
 
+import edu.wpi.first.math.estimator.PoseEstimator;
+import edu.wpi.first.math.estimator.PoseEstimator3d;
+import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
@@ -21,15 +26,22 @@ public class Robot extends TimedRobot {
   private final RobotContainer m_robotContainer;
   SwerveSubsystem swerveSubsystem = new SwerveSubsystem();
 
+  private NetworkTable apriltagTable;
+
   public Robot() {
     m_robotContainer = new RobotContainer();
+    apriltagTable = NetworkTableInstance.getDefault().getTable("apriltags");
   }
 
 
   @Override
   public void robotPeriodic() {
     CommandScheduler.getInstance().run();
-    swerveSubsystem.updateOdometry();
+    swerveSubsystem.getposeEstimator().update(
+    swerveSubsystem.getHead(),
+    swerveSubsystem.getPositions()
+);
+    swerveSubsystem.updateApriltagOdometry();
   }
 
   @Override
